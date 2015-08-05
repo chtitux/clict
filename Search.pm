@@ -63,15 +63,16 @@ sub foldersPrettyPrint
     ref $trips->{trips} ne 'ARRAY' and print STDERR "No trips found\n";
     ref $trips->{trips} ne 'ARRAY' and return;
 
-    printf("Departure                  Arrival                    Price\n");
     #       2015-08-06T20:00:00+02:00  2015-08-06T20:00:00+02:00   99 €
     foreach my $trip (@{ $trips->{trips} })
     {
-        printf("%25s  %25s\n",
+        printf("%-30s  %-30s %s%s\n",
             getElementDetail(id => $trip->{departure_station_id}, field => 'name', elements => $trips->{stations}),
             getElementDetail(id => $trip->{arrival_station_id},   field => 'name', elements => $trips->{stations}),
+            getElementDetail(id => $trip->{folder_id},            field => 'system', elements => $trips->{folders}),
         );
-        printf("%s  %s %5.2d €\n", $trip->{departure_date}, $trip->{arrival_date}, $trip->{cents} / 100);
+        printf("%30s  %30s %5.2d €\n", $trip->{departure_date}, $trip->{arrival_date}, $trip->{cents} / 100);
+        printf("\n");
     }
 }
 

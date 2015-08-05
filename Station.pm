@@ -34,7 +34,6 @@ sub findStationId
     my %params = @_;
     my $stationName = $params{stationName};
 
-    print "Looking for $stationName\n";
     # No authentification needed for searching station ID
     my $jsonObject = Http::request(
         url => 'stations?context=search&q='.$stationName,
