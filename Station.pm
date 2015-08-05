@@ -2,6 +2,31 @@
 use strict;
 package Station;
 use Http;
+use Search;
+
+sub findFolders
+{
+    my %params = @_;
+    my $from    = $params{from};
+    my $to      = $params{to};
+    my $token   = $params{token};
+
+    my $stationIdFrom = Station::findStationId(
+        stationName => $from,
+    );
+    not $stationIdFrom and return $stationIdFrom;
+
+    my $stationIdTo = Station::findStationId(
+        stationName => $to,
+    );
+    not $stationIdTo and return $stationIdTo;
+
+    my $folders = Search::folders(
+        token           => $token,
+        stationIdFrom   => $stationIdFrom,
+        stationIdTo     => $stationIdTo,
+    );
+}
 
 sub findStationId
 {

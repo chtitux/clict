@@ -1,13 +1,26 @@
 #!/usr/bin/perl
 use strict;
-
+use Getopt::Long;
 use Station;
 
-print Station::findStationId(
-    stationName => 'Lille',
+my ($from, $to, $token);
+GetOptions(
+    "from=s" => \$from,
+    "to=s"   => \$to,
+    "token=s"=> \$token,
 );
 
-printHelpAndExit();
+if(not ($from and $to))
+{
+    printHelpAndExit();
+}
+
+print Station::findFolders(
+    from    => $from,
+    to      => $to,
+    token   => $token,
+);
+
 
 sub printHelpAndExit
 {
