@@ -4,6 +4,9 @@ package Station;
 use Http;
 use Search;
 
+# Find the ID stations from the departure and the arrival, and
+# search for the trips between them
+# If one of the stations is not found, return false
 sub findTrips
 {
     my %params = @_;
@@ -34,6 +37,8 @@ sub findTrips
     return $folders;
 }
 
+# Find the station ID from the station name
+# Beware, if you search "P", it will get the first result (that may be Paris or Pau, you do not know)
 sub findStationId
 {
     my %params = @_;

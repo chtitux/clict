@@ -45,6 +45,9 @@ sub trips
     return $jsonObject;
 }
 
+# Because most of JSON elements are not indexed by their ids, but stored in an array
+# with their own id, this helper will search an element in an array with the corresponding id,
+# and return the asked "field"
 sub getElementDetail
 {
     my %params = @_;
@@ -60,6 +63,8 @@ sub getElementDetail
         }
     }
 }
+
+# Parse ISO 8601 date format, replace "T" with a space and remove timezone
 sub prettyDate
 {
     my %params = @_;
@@ -71,15 +76,16 @@ sub prettyDate
     return $date;
 }
 
+# Display a nice table of the trips
 sub tripsPrettyPrint
 {
     my %params = @_;
     my $trips = $params{trips};
 
+    # If no trips were found, return now
     ref $trips->{trips} ne 'ARRAY' and print STDERR "No trips found\n";
     ref $trips->{trips} ne 'ARRAY' and return;
 
-    #       2015-08-06T20:00:00+02:00  2015-08-06T20:00:00+02:00   99 €
     foreach my $trip (@{ $trips->{trips} })
     {
         printf("%-30s  %-30s %s\n",

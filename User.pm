@@ -3,6 +3,7 @@ use strict;
 package User;
 use Http;
 
+# Login with email and password and return the full object
 sub getCredentials
 {
     my %params = @_;
