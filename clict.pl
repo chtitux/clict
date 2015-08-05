@@ -3,7 +3,6 @@ use strict;
 use Getopt::Long;
 use Station;
 use User;
-use Data::Dumper;
 use POSIX qw(strftime);
 
 my $LOGIN_FILE = '.credentials';
@@ -65,6 +64,7 @@ my $trips = Station::findTrips(
     departure_date  => $departure_date,
     pretty_print    => 1,
 );
+not $trips and exit 1;
 print Search::tripsPrettyPrint(
     trips   => $trips,
 );
