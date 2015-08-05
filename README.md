@@ -3,6 +3,7 @@ Command Line Interface for [Capitaine Train](https://www.capitainetrain.com/)
 
 # Requirements
 You need to install JSON::XS and LWP::Agent Perl modules.
+On Debian, they can be found in `libwww-perl` and `libjson-xs-perl` packages.
 
 # Usage
 1. Create a `.credentials` file with the following content : `$login:$password`. For example : `test@example.net:h4ckM3`
