@@ -2,18 +2,49 @@
 use strict;
 use Getopt::Long;
 use Station;
+use User;
 use Data::Dumper;
 
-my ($from, $to, $token);
+my $LOGIN_FILE = '.credentials';
+
+my ($from, $to,);
+my ($email, $password, $token);
+
+# Read credentials from file if the file exists
+if(-f $LOGIN_FILE and open CREDS, '<', $LOGIN_FILE)
+{
+    my $credentials = <CREDS>;
+    chomp($credentials);
+    ($email, $password) = split(':', $credentials);
+}
+
+# Read arguments from command line
 GetOptions(
-    "from=s" => \$from,
-    "to=s"   => \$to,
-    "token=s"=> \$token,
+    "from=s"     => \$from,
+    "to=s"       => \$to,
+    "email=s"    => \$email,
+    "password=s" => \$password,
+    "token=s"    => \$token,
 );
 
 if(not ($from and $to))
 {
     printHelpAndExit();
+}
+
+# If the token is not filled from command line arguments, get a new one from CT
+if(not $token)
+{
+    if(not ($email and $password))
+    {
+        print STDERR "Email or password not set. Please use --email and --password, or write a .credentials file with \$email:\$password\n";
+        exit 1;
+    }
+    my $credentials = User::getCredentials(
+        email   => $email,
+        password=> $password,
+    );
+    $token = $credentials->{meta}->{token};
 }
 
 my $trips = Station::findFolders(
