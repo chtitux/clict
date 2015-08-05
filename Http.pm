@@ -5,6 +5,9 @@ package Http;
 use LWP::UserAgent;
 use JSON::XS;
 
+# Helper package to perform HTTPS request
+# and decode the JSON received
+
 my $ua = LWP::UserAgent->new( agent => "CliCT/0.42" );
 my $API_URL = 'https://www.capitainetrain.com/api/v4/';
 
@@ -21,14 +24,17 @@ sub request
     my $req = HTTP::Request->new(
         $method => $API_URL.$url,
     );
-    $req->header('content-type' => 'application/json; charset=UTF-8');
+    # For a unknown reason, CT fails if x-requested-with is not set with XMLHttpRequest
     $ajax_header and $req->header('x-requested-with' => 'XMLHttpRequest');
     $token       and $req->header('authorization' => 'Token token="'.$token.'"');
+    # We will always post JSON
+    $post_data   and $req->header('content-type' => 'application/json; charset=UTF-8');
     $post_data   and $req->content(encode_json($post_data));
 
     # Execute the HTTP call
     my $res = $ua->request($req);
 
+    # Use eval to prevent Perl dies if the JSON is not valid (50x or 40x errors page for example)
     my $json = eval {
         decode_json $res->content();
     };

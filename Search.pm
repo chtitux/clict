@@ -3,26 +3,32 @@ use strict;
 package Search;
 use Http;
 
+# Package used for search-related subs
+
 sub trips
 {
     my %params = @_;
     my $stationIdFrom = $params{stationIdFrom};
     my $stationIdTo   = $params{stationIdTo};
     my $token         = $params{token};
+    my $passenger_id  = $params{passenger_id};
+    my $departure_date= $params{departure_date};
 
     my $post_data = {
         search  => {
-            "departure_date"        => "2015-08-06T20:00:00UTC",
+            "departure_date"        => $departure_date,
             "return_date"           => undef,
-            "passengers"            => ["8444892"],
+            # The passengers ids are passed twice, need to be clarified
+            "passengers"            => [$passenger_id],
+            "passenger_ids"         => [$passenger_id],
             "cards"                 => [],
             "cuis"                  => {},
+            # FIXME : The systems should not be hard-coded, but instead provided through an API
             "systems"               => ["sncf","db","idbus","idtgv","ouigo","trenitalia","ntv","timetable"],
             "exchangeable_part"     => undef,
             "departure_station_id"  => $stationIdFrom,
             "arrival_station_id"    => $stationIdTo,
             "exchangeable_pnr_id"   => undef,
-            "passenger_ids"         =>["8444892"],
             "card_ids"              =>[],
         },
     };
@@ -54,6 +60,16 @@ sub getElementDetail
         }
     }
 }
+sub prettyDate
+{
+    my %params = @_;
+    my $date = $params{date};
+    if($date =~ /^([^T]+)T([^+]+)+/)
+    {
+        return "$1 $2";
+    }
+    return $date;
+}
 
 sub tripsPrettyPrint
 {
@@ -66,12 +82,16 @@ sub tripsPrettyPrint
     #       2015-08-06T20:00:00+02:00  2015-08-06T20:00:00+02:00   99 €
     foreach my $trip (@{ $trips->{trips} })
     {
-        printf("%-30s  %-30s %s%s\n",
+        printf("%-30s  %-30s %s\n",
             getElementDetail(id => $trip->{departure_station_id}, field => 'name', elements => $trips->{stations}),
             getElementDetail(id => $trip->{arrival_station_id},   field => 'name', elements => $trips->{stations}),
             getElementDetail(id => $trip->{folder_id},            field => 'system', elements => $trips->{folders}),
         );
-        printf("%30s  %30s %5.2d €\n", $trip->{departure_date}, $trip->{arrival_date}, $trip->{cents} / 100);
+        printf("%-30s  %-30s %8.2d €\n",
+            prettyDate(date => $trip->{departure_date}),
+            prettyDate(date => $trip->{arrival_date}),
+            $trip->{cents} / 100
+        );
         printf("\n");
     }
 }

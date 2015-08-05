@@ -10,6 +10,9 @@ sub findTrips
     my $from    = $params{from};
     my $to      = $params{to};
     my $token   = $params{token};
+    my $passenger_id  = $params{passenger_id};
+    my $departure_date= $params{departure_date};
+
 
     my $stationIdFrom = Station::findStationId(
         stationName => $from,
@@ -25,6 +28,8 @@ sub findTrips
         token           => $token,
         stationIdFrom   => $stationIdFrom,
         stationIdTo     => $stationIdTo,
+        passenger_id    => $passenger_id,
+        departure_date  => $departure_date,
     );
     return $folders;
 }
