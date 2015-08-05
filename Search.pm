@@ -12,38 +12,21 @@ sub folders
 
     my $post_data = {
         search  => {
-            "departure_date"   =>"2015-08-06T20:00:00UTC",
-            "return_date"      =>undef,
-            "passengers"       =>["8444892"],
-            "cards"=>[],
-            "cuis"=>{},
-            "systems"=>["sncf","db","idbus","idtgv","ouigo","trenitalia","ntv","timetable"],
-            "exchangeable_part"=>undef,
-            "departure_station_id"=>"4718",
-            "arrival_station_id"=>"4652",
-            "exchangeable_pnr_id"=>undef,
-            "passenger_ids"=>["8444892"],
-            "card_ids"=>[],
+            "departure_date"        => "2015-08-06T20:00:00UTC",
+            "return_date"           => undef,
+            "passengers"            => ["8444892"],
+            "cards"                 => [],
+            "cuis"                  => {},
+            "systems"               => ["sncf","db","idbus","idtgv","ouigo","trenitalia","ntv","timetable"],
+            "exchangeable_part"     => undef,
+            "departure_station_id"  => $stationIdFrom,
+            "arrival_station_id"    => $stationIdTo,
+            "exchangeable_pnr_id"   => undef,
+            "passenger_ids"         =>["8444892"],
+            "card_ids"              =>[],
         },
     };
 
-    # Original JSON
-    # {"search":
-    #   {
-    #    "departure_date"   :"2015-08-06T20:00:00UTC",
-    #    "return_date"      :null,
-    #    "passengers"       :["8444892"],
-    #    "cards":[],
-    #    "cuis":{},
-    #    "systems":["sncf","db","idbus","idtgv","ouigo","trenitalia","ntv","timetable"],
-    #    "exchangeable_part":null,
-    #    "departure_station_id":"4718",
-    #    "arrival_station_id":"4652",
-    #    "exchangeable_pnr_id":null,
-    #    "passenger_ids":["8444892"],
-    #    "card_ids":[]
-    #   }
-    #  }
     my $jsonObject = Http::request(
         url         => 'search',
         method      => 'POST',
@@ -51,9 +34,45 @@ sub folders
         ajax_header => 1,
         post_data   => $post_data,
     );
-    return $jsonObject;
-    # search'  -H 'authorization: Token token="bu_RFCaWgkJxgm86W4s3"'  -H 'x-requested-with: XMLHttpRequest'  -H 'content-type: application/json; charset=UTF-8'    --data-binary '{"search":{"departure_date":"2015-08-06T20:00:00UTC","return_date":null,"passengers":["8444892"],"cards":[],"cuis":{},"systems":["sncf","db","idbus","idtgv","ouigo","trenitalia","ntv","timetable"],"exchangeable_part":null,"departure_station_id":"4718","arrival_station_id":"4652","exchangeable_pnr_id":null,"passenger_ids":["8444892"],"card_ids":[]}}' --compressed
+    not $jsonObject and return $jsonObject;
 
+    return $jsonObject;
+}
+
+sub getElementDetail
+{
+    my %params = @_;
+    my $elements = $params{elements};
+    my $field    = $params{field};
+    my $id       = $params{id};
+
+    foreach my $element (@{ $elements })
+    {
+        if($id eq $element->{id})
+        {
+            return $element->{$field};
+        }
+    }
+}
+
+sub foldersPrettyPrint
+{
+    my %params = @_;
+    my $trips = $params{trips};
+
+    ref $trips->{trips} ne 'ARRAY' and print STDERR "No trips found\n";
+    ref $trips->{trips} ne 'ARRAY' and return;
+
+    printf("Departure                  Arrival                    Price\n");
+    #       2015-08-06T20:00:00+02:00  2015-08-06T20:00:00+02:00   99 €
+    foreach my $trip (@{ $trips->{trips} })
+    {
+        printf("%25s  %25s\n",
+            getElementDetail(id => $trip->{departure_station_id}, field => 'name', elements => $trips->{stations}),
+            getElementDetail(id => $trip->{arrival_station_id},   field => 'name', elements => $trips->{stations}),
+        );
+        printf("%s  %s %5.2d €\n", $trip->{departure_date}, $trip->{arrival_date}, $trip->{cents} / 100);
+    }
 }
 
 1;
