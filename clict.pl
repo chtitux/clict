@@ -2,6 +2,7 @@
 use strict;
 use Getopt::Long;
 use Station;
+use Data::Dumper;
 
 my ($from, $to, $token);
 GetOptions(
@@ -15,11 +16,11 @@ if(not ($from and $to))
     printHelpAndExit();
 }
 
-print Station::findFolders(
+print Dumper(Station::findFolders(
     from    => $from,
     to      => $to,
     token   => $token,
-);
+));
 
 
 sub printHelpAndExit

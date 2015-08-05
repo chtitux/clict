@@ -26,6 +26,7 @@ sub findFolders
         stationIdFrom   => $stationIdFrom,
         stationIdTo     => $stationIdTo,
     );
+    return $folders;
 }
 
 sub findStationId
