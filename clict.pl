@@ -1,6 +1,12 @@
 #!/usr/bin/perl
 use strict;
 
+use Station;
+
+print Station::findStationId(
+    stationName => 'Lille',
+);
+
 printHelpAndExit();
 
 sub printHelpAndExit
