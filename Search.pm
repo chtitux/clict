@@ -3,7 +3,7 @@ use strict;
 package Search;
 use Http;
 
-sub folders
+sub trips
 {
     my %params = @_;
     my $stationIdFrom = $params{stationIdFrom};
@@ -55,7 +55,7 @@ sub getElementDetail
     }
 }
 
-sub foldersPrettyPrint
+sub tripsPrettyPrint
 {
     my %params = @_;
     my $trips = $params{trips};

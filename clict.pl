@@ -47,23 +47,31 @@ if(not $token)
     $token = $credentials->{meta}->{token};
 }
 
-my $trips = Station::findFolders(
+# Search trips and print them in a pretty way
+my $trips = Station::findTrips(
     from    => $from,
     to      => $to,
     token   => $token,
     pretty_print    => 1,
 );
-print Search::foldersPrettyPrint(
+print Search::tripsPrettyPrint(
     trips   => $trips,
 );
 
 sub printHelpAndExit
 {
     print <<EOF;
-Usage : $0 --from=<City> --to=<City> --token=<CT token>
-    <City> must be replaced with a real city with a station handled by Capitaine Train.
-    <CT token> is the token provided by Capitaine Train.
-    To get the token, log in on https://www.capitainetrain.com/search/ , open developper console (press F12) and type : console.log(ENV.AUTHORIZATION_TOKEN)
+Usage : $0 --from=<City> --to=<City>
+    Arguments :
+    --from      : Required, City of the start of the trip
+    --top       : Required, City of the end of the trip
+    --token     : Capitaine Train token.
+                  To get the token, log in on https://www.capitainetrain.com/search/ ,
+                  open developper console (press F12) and type : console.log(ENV.AUTHORIZATION_TOKEN)
+                  clict will automatically get a fresh token with your email and password if the token is not provided
+    --email     : email for the login phase
+    --password  : password for the login phase. If you do not want to pass your password in the command line,
+                  create a .credentials file with \$login:\$password in it
 
 EOF
     exit 0;

@@ -4,7 +4,7 @@ package Station;
 use Http;
 use Search;
 
-sub findFolders
+sub findTrips
 {
     my %params = @_;
     my $from    = $params{from};
@@ -21,7 +21,7 @@ sub findFolders
     );
     not $stationIdTo and return $stationIdTo;
 
-    my $folders = Search::folders(
+    my $folders = Search::trips(
         token           => $token,
         stationIdFrom   => $stationIdFrom,
         stationIdTo     => $stationIdTo,
