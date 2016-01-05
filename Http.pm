@@ -9,7 +9,7 @@ use JSON::XS;
 # and decode the JSON received
 
 my $ua = LWP::UserAgent->new( agent => "CliCT/0.42" );
-my $API_URL = 'https://www.capitainetrain.com/api/v4/';
+my $API_URL = 'https://www.capitainetrain.com/api/v5/';
 
 sub request
 {
